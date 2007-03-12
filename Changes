@@ -1,5 +1,8 @@
 Revision history for Perl extension Color::Similarity::HCL.
 
+0.02  Mon Mar 12 19:37:15 CET 2007
+	- Compatibility fixes for Perl 5.6.x.
+
 0.01  Sun Mar 11 12:34:47 CET 2007
 	- First public release.
 

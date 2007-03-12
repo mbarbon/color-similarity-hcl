@@ -29,17 +29,16 @@ QuE<eacute>ebec Canada, J8X 3X7
 use strict;
 use base qw(Exporter);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 our @EXPORT_OK = qw(rgb2hcl distance distance_hcl);
 
 use List::Util qw(max min);
 use Math::Trig;
 
-use constant { Y0     => 100,
-               gamma  => 3,
-               Al     => 1.4456,
-               Ah_inc => 0.16,
-               };
+use constant Y0     => 100;
+use constant gamma  => 3;
+use constant Al     => 1.4456;
+use constant Ah_inc => 0.16;
 
 =head1 FUNCTIONS
 
@@ -47,7 +46,7 @@ use constant { Y0     => 100,
 
   my $distance = distance( [ $r1, $g1, $b1 ], [ $r2, $g2, $b2 ] );
 
-Comverts the colors to the HCL space and computes their distance.
+Converts the colors to the HCL space and computes their distance.
 
 =cut
 
