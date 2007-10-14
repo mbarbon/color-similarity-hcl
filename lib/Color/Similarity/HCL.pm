@@ -13,10 +13,10 @@ Color::Similarity::HCL - compute color similarity using the HCL color space
 =head1 DESCRIPTION
 
 Computes color similarity using the color space and distance metric
-defined in the paper:
+defined in the research report:
 
-A New Perceptually Uniform Color Space with Associated Color
-Similarity Measure for ContentBased Image and Video Retrieval
+HCL: a new Color Space for a more Effective Content-based Image
+Retrieval
 
 M. Sarifuddin <m.sarifuddin@uqo.ca> - Rokia Missaoui <rokia.missaoui@uqo.ca>
 DE<eacute>partement d'informatique et d'ingE<eacute>nierie,
@@ -24,16 +24,18 @@ UniversitE<eacute> du QuE<eacute>bec en Outaouais
 C.P. 1250, Succ. B Gatineau
 QuE<eacute>ebec Canada, J8X 3X7
 
+L<http://w3.uqo.ca/missaoui/Publications/TRColorSpace.zip>
+
 =cut
 
 use strict;
 use base qw(Exporter);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 our @EXPORT_OK = qw(rgb2hcl distance distance_hcl);
 
 use List::Util qw(max min);
-use Math::Trig;
+use Math::Trig qw(:pi rad2deg deg2rad atan);
 
 use constant Y0     => 100;
 use constant gamma  => 3;
@@ -53,29 +55,36 @@ Converts the colors to the HCL space and computes their distance.
 sub distance {
     my( $t1, $t2 ) = @_;
 
-    return distance_hcl( [ rgb2hcl( @$t1 ) ], [ rgb2hcl( @$t2 ) ] );
+    return distance_hcl( rgb2hcl( @$t1 ), rgb2hcl( @$t2 ) );
 }
 
 =head2 rgb2hcl
 
-  my( $h, $c, $l ) = rgb2hcl( $r, $g, $b );
+  [ $h, $c, $l ] = rgb2hcl( $r, $g, $b );
 
 Converts between RGB and HCL color spaces.
 
 =cut
 
+sub _atan {
+    my( $y, $x ) = @_;
+
+    return $y < 0 ? - pip2 : pip2 if $x == 0;
+    return atan( $y / $x );
+}
+
 sub rgb2hcl {
     my( $r, $g, $b ) = @_;
 
     my( $min, $max ) = ( min( $r, $g, $b ), max( $r, $g, $b ) );
-    return ( 0, 0, 0 ) if $max == 0; # special-case black
+    return [ 0, 0, 0 ] if $max == 0; # special-case black
     my $alpha = ( $min / $max ) / Y0;
     my $Q = exp( $alpha * gamma );
 
     my( $rg, $gb, $br ) = ( $r - $g, $g - $b, $b - $r );
     my $L = ( $Q * $max + ( 1 - $Q ) * $min ) / 2;
     my $C = $Q * ( abs( $rg ) + abs( $gb ) + abs( $br ) ) / 3;
-    my $H = rad2deg( atan2( $gb, $rg ) );
+    my $H = rad2deg( _atan( $gb, $rg ) );
 
     # The paper uses 180, not 90, but using 180 gives
     # red the same HCL value as green...
@@ -83,12 +92,17 @@ sub rgb2hcl {
 #    $H = 90 + $H         if $rg <  0 && $gb >= 0;
 #    $H = $H - 90         if $rg <  0 && $gb <  0;
 #   Alternative B
+#    $H = 2 * $H / 3      if $rg >= 0 && $gb >= 0;
+#    $H = 4 * $H / 3      if $rg >= 0 && $gb <  0;
+#    $H = 90 + 4 * $H / 3 if $rg <  0 && $gb >= 0;
+#    $H = 3 * $H / 4 - 90 if $rg <  0 && $gb <  0;
+#   From http://w3.uqo.ca/missaoui/Publications/TRColorSpace.zip
     $H = 2 * $H / 3      if $rg >= 0 && $gb >= 0;
     $H = 4 * $H / 3      if $rg >= 0 && $gb <  0;
-    $H = 90 + 4 * $H / 3 if $rg <  0 && $gb >= 0;
-    $H = 3 * $H / 4 - 90 if $rg <  0 && $gb <  0;
+    $H = 180 + 4 * $H / 3 if $rg <  0 && $gb >= 0;
+    $H = 2 * $H / 3 - 180 if $rg <  0 && $gb <  0;
 
-    return ( $H, $C, $L );
+    return [ $H, $C, $L ];
 }
 
 =head2 distance_hcl
@@ -116,9 +130,13 @@ sub distance_hcl {
 
 =head1 SEE ALSO
 
-L<http://mmis.doc.ic.ac.uk/mmir2005/CameraReadyMissaoui.pdf>
+L<http://w3.uqo.ca/missaoui/Publications/TRColorSpace.zip>
 
-Corrected 180 to 90 in the RGB -> HCL transformation (see C<rgb2hcl>).
+Corrected the RGB -> HCL transformation (see C<rgb2hcl>) as per the
+research report by the same authors (thanks to David Hoerl for finding
+the document with the corrected formula).
+
+L<Color::Similarity>, L<Color::Similarity::RGB>, L<Color::Similarity::Lab>
 
 =head1 AUTHOR
 
@@ -132,5 +150,12 @@ This program is free software; you can redistribute it or modify it
 under the same terms as Perl itself.
 
 =cut
+
+sub _vtable {
+    return { distance_rgb => \&distance,
+             convert_rgb  => \&rgb2hcl,
+             distance     => \&distance_hcl,
+             };
+}
 
 1;
