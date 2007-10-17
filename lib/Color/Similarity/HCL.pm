@@ -31,12 +31,13 @@ L<http://w3.uqo.ca/missaoui/Publications/TRColorSpace.zip>
 use strict;
 use base qw(Exporter);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our @EXPORT_OK = qw(rgb2hcl distance distance_hcl);
 
 use List::Util qw(max min);
-use Math::Trig qw(:pi rad2deg deg2rad atan);
+use Math::Trig qw(pi rad2deg deg2rad atan);
 
+use constant pip2   => pi / 2; # work around old Math::Trig
 use constant Y0     => 100;
 use constant gamma  => 3;
 use constant Al     => 1.4456;

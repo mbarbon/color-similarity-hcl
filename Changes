@@ -1,5 +1,9 @@
 Revision history for Perl extension Color::Similarity::HCL.
 
+0.04  Wed Oct 17 23:07:49 CEST 2007
+	- Compatibility with old Math::Trig
+	  (reported by David Cantrell).
+
 0.03  Sun Oct 14 19:00:58 CEST 2007
 	- Corrected the RGB -> HCL transformation as per the research
 	  report of the same authors (thanks to David Hoerl)
