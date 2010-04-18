@@ -1,5 +1,8 @@
 Revision history for Perl extension Color::Similarity::HCL.
 
+0.05  Sun Apr 18 16:23:51 CEST 2010
+	- Fixed some rounding errors in the distance_hcl function.
+
 0.04  Wed Oct 17 23:07:49 CEST 2007
 	- Compatibility with old Math::Trig
 	  (reported by David Cantrell).

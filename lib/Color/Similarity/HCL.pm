@@ -31,7 +31,7 @@ L<http://w3.uqo.ca/missaoui/Publications/TRColorSpace.zip>
 use strict;
 use base qw(Exporter);
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 our @EXPORT_OK = qw(rgb2hcl distance distance_hcl);
 
 use List::Util qw(max min);
