@@ -4,7 +4,7 @@ use strict;
 use Color::Similarity::HCL qw(distance);
 
 use constant STEP => 7; # keep test count manageable
-use Test::More no_plan => 1;
+use Test::More 'no_plan';
 
 # maybe use random samples?
 for( my $r = 0; $r < 256; $r += STEP ) {
