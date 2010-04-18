@@ -4,6 +4,8 @@
 ,v$
 \B\.svn\b
 \B\.cvsignore$
+\B.git\b
+\B.gitignore\b
 
 # Avoid Makemaker generated and utility files.
 \bMakefile$
@@ -37,3 +39,4 @@
 \B\._
 # Avoid archives of this distribution
 \bColor-Similarity-HCL-[\d\.\_]+
+^MYMETA.yml$
